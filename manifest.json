@@ -1,0 +1,23 @@
+{
+	"manifest_version": 2,
+	"name": "Weblocker",
+	"description": "Blocks website and increases productivity.",
+	"version": "2.0",
+	"author": "Smit Patel",
+	"browser_action": {
+		"default_icon": "computer.png",
+		"default_title": "Just observing your current url.",
+		"default_popup": "ui.html"
+	},
+	"content_scripts": [{
+		"matches": ["http://*/*", "https://*/*"],
+		"js": ["content.js", "jquery-3.5.1.min.js"],
+		"css": ["content.css"]
+	  }],
+	"permissions": ["tabs", "activeTab", "http://127.0.0.1:5000/*", "<all_urls>", "storage", "webRequest", "webRequestBlocking", "declarativeContent"],
+	"background": {
+		"scripts": ["fetchurl.js"],
+		"persistent": true
+	},
+	"content_security_policy": "script-src 'self' 'unsafe-eval' https://ajax.googleapis.com; object-src 'self'"
+}
