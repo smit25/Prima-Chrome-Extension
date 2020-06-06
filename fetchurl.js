@@ -2,39 +2,7 @@
 // import {unblock } from './block.js';
 // import {myfunc} from './block.js';
 
-<<<<<<< HEAD
 console.log('Begin')
-=======
-// FETCH URL FROM HTML
-var website = ''
-var time = ''
-
- const form = document.getElementById('inputForm')
- form.addEventListener('submit', (event) => {
-   event.preventDefault();
-   website = document.getElementById('url').value
-   console.log(`smit ${website}`)
- })
-
-var blockUrl = {}
-blockUrl['website'] = time
-/*
-chrome.storage.sync.set({ 'blockUrl': blockUrl }), () => {
-  console.log(`BlockUrl set`);
-}
-var startTime = document.getElementsByName('startTime').value
-var endtime = document.getElementsByName('endTime').value
-
-chrome.storage.sync.set({ 'startTime': startTime, 'endTime': endTime }, () => {
-  console.log(`Start & End time set`)
-})
-
-document.getElementById('start').addEventListener('click', setInterval(background, 2000))
-document.getElementById('stop').addEventListener('click', clearInterval(background))
-
-var currDay = 0
-var mainUrl = ''
->>>>>>> dca6bbbfc65baf34a4501d510e01ba734e33bd5d
 var viewTime = {}
 var currDate = new Date()
 var currDay = currDate.getDay()
@@ -136,7 +104,6 @@ var unblock = (myfunc) => {
 // BACKGROUND
 
 var background = () => {
-  console.log('entered')
   var d = new Date()
   var day = d.getDay()
   var hrs = d.getHours()
@@ -151,43 +118,49 @@ var background = () => {
     endTime = timeSet[2] +"." + timeSet[3]
     if (flag == false) {
       if ((currTime >= endTime) || (currTime < startTime)) {
-        unblock(myfunc);
+        if (currTime >= endTime) { console.log('Donna') }
+        else if (currTime < startTime) { console.log('Harvey') }
+        console.log(currTime + ' ' + startTime + ' ' + endTime)
+        unblock(myfunc)
         flag = true
       }
     }
   })
-  chrome.storage.sync.get("viewTime", async (result) => {
+  chrome.storage.sync.get("viewTime", (result) => {
     if (result) {
-      viewTime = result['viewtime']
+      viewTime = result['viewTime']
+      console.log(viewTime)
     }
     if (day != currDay) {
-      viewTime.clear()
+      viewTime = {}
       chrome.storage.sync.set({"viewTime" : viewTime }, () => {
         console.log('New day, history cleared')
       })
       currDay = day
     }
-  })
-  chrome.storage.sync.get("blockUrl", (data) => {
-    blockUrl = data['blockUrl']
-    console.log('blockUrl accessed')
 
-    if (startTime <= currTime < endTime) {
-      flag = false
-      if (typeof (blockUrl['mainUrl']) != 'undefined' && viewTime['mainUrl'] >= blockUrl['mainUrl']) {
-        block(mainUrl, myfunc);
-        viewTime[mainUrl] = 'blocked'
+    chrome.storage.sync.get("blockUrl", (data) => {
+      blockUrl = data['blockUrl']
+      console.log('blockUrl accessed')
+
+      if (startTime <= currTime < endTime) {
+        flag = false
+        if ((mainUrl in blockUrl) && (viewTime[mainUrl] >= blockUrl[mainUrl]) && (viewTime[mainUrl] != 'blocked')) {
+          block(mainUrl, myfunc)
+          chrome.tabs.reload(() => { console.log('reloaded') })
+          viewTime[mainUrl] = 'blocked'
+          chrome.storage.sync.set({ 'viewTime': viewTime }, () => {
+            console.log(`${mainUrl} blocked`)
+          })
+        }
+      } if (viewTime[mainUrl] != 'blocked') {
+        let newTime = viewTime[mainUrl] + 1
+        viewTime[mainUrl] = newTime
         chrome.storage.sync.set({ 'viewTime': viewTime }, () => {
-          console.log(`${mainUrl} blocked`)
+          console.log('Time updated')
         })
       }
-    } if (viewTime[mainUrl] != 'blocked') {
-      let newTime = viewTime[mainUrl] + 1
-      viewTime[mainUrl] = newTime
-      chrome.storage.sync.set({ 'viewTime': viewTime }, () => {
-        console.log('Time updated')
-      })
-    }
+    })
   })
 }
 
@@ -200,14 +173,19 @@ chrome.runtime.onMessage.addListener(
       'from a content script:' + sender.tab.url :
       'from the extension')
 
-    if (request.command == true) {
+    if (request.command == '0') {
       console.log('command = 0')
       sendResponse({ message: "Started" })
       loop = setInterval(background, newLocal)
       console.log('lol')
-    } if (request.command == false) {
+    } if (request.command == '1') {
       console.log(`command = 1`)
       clearInterval(loop)
       sendResponse({ message: "Paused" });
+    } 
+    if (request.command == '2') {
+      console.log(`command = 2`)
+      unblock(myfunc)
+      sendResponse({ message: "Unblocked All!" });
     } 
   });

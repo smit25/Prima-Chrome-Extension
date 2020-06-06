@@ -1,4 +1,4 @@
-body { min-width: 450px; min-height: 400px; background-image: url('./test_background.jpg'); color: white;}
+body { min-width: 450px; min-height: 400px; color:black;}
 #overlay {
     position: absolute;
     display: none;
@@ -26,4 +26,6 @@ body { min-width: 450px; min-height: 400px; background-image: url('./test_backgr
 
   h1 {
       text-align: center;
+      color: black;
   }
+  #submit { align-self: center;}
