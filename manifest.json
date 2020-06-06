@@ -10,7 +10,7 @@
 		"default_popup": "ui.html"
 	},
 	"content_scripts": [{
-		"matches": ["http://*/*", "https://*/*"],
+		"matches": ["http://*/*", "https://*/*", "<all_urls>"],
 		"js": ["content.js", "jquery-3.5.1.min.js"],
 		"css": ["content.css"]
 	  }],
