@@ -5,17 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Security-Policy" content="default-src *;">
         <meta charset="UTF-8">
-        <title> Prima </title>
+        <title> PRIMA </title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <script src="jquery-3.5.1.min.js"></script>
         <link rel="stylesheet" href="content.css">
     </head>
     <body>
-        <h1>Prima</h1>
+        <h1>P R I M A</h1>
         <div class = "tabs">
-        <div class ="col">
-        <button type="button" class="btn btn-outline-dark" id ="viewTab">viewTime</button>
-        <button type="button" class="btn btn-outline-dark" id ="blockTab">blockUrl</button>
+        <div class ="col-sm">
+        <button type="button" class="btn btn-outline-light" id ="viewTab">View Time on Chrome</button>
+        <button type="button" class="btn btn-outline-light float-right" id ="blockTab">URL's You've Entered</button>
       </div>
     </div>
     <div id  = "overlay" >
@@ -24,14 +24,16 @@
         <form id="inputForm">
           <div id = "contain">
           <div class="form-row">
-            <div class="col">
+            <div class="col time">
               <input type="text" class="form-control m-2" id="url" placeholder="Enter URL" >
             </div>
-            <div class="col">
-              <input type="text" class="form-control m-2" placeholder="Enter time(in mins)" id = "urlLimit" >
+            <div class="col time">
+              <input type="text" class="form-control m-2" placeholder="Enter Time (in mins)" id = "urlLimit" >
             </div>
+          </div>
+            <div class = "form-row">
             <div class="col">
-              <button type="button" class=" btn btn-outline-dark" id = "add"> + </button>
+              <button type="button" class=" btn btn-outline-light " id = "add"> Add </button>
             </div>
           </div>
           <div id = "message">
@@ -39,24 +41,24 @@
           </div>
         </div>
           <div class="form-row">
-            <div class="col">
-              <input type="time" class="form-control m-2" placeholder="Enter start time" id = "startTime" value = "00:00" required>
+            <div class="col time">
+              <input type="time" class="form-control " placeholder="Enter start time" id = "startTime" value = "00:00" required>
             </div>
-            <div class="col">
-              <input type="time" class="form-control m-2" placeholder="Enter end time" id = "stopTime" value = "23:59" required>
+            <div class="col time">
+              <input type="time" class="form-control" placeholder="Enter end time" id = "stopTime" value = "23:59" required>
             </div>
           </div>
           <div class ="form-row">
             <div class="col">
-              <button type="submit" class=" btn btn-outline-dark" id = "submit"> Set </button>
+              <button type="submit" class=" btn btn-outline-light " id = "submit"> Set </button>
             </div>
           </div>
         
-          <button type="button" class="btn btn-outline-dark" id ="start">Start</button>
-          <button type="button" class="btn btn-outline-dark" id = "stop">Pause</button>
+          <button type="button" class="btn btn-outline-light" id ="start">Start</button>
+          <button type="button" class="btn btn-outline-light float-right" id = "stop">Pause</button>
         </form>
         <div id = "unblock">
-            <button type = "button" class = "btn btn-outline-dark" id = "unblock">Unblock all</button>
+            <button type = "button" class = "btn btn-outline-light" id = "unblock">Unblock all</button>
           </div>  
 <script src="content.js" charset="utf-8" defer ></script>
     </body>
