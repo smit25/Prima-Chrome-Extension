@@ -100,6 +100,15 @@ var unblock = (myfunc) => {
   chrome.webRequest.onBeforeRequest.removeListener(myfunc)
   console.log('All websites unblocked')
   chrome.tabs.reload(() => { console.log('reloaded') })
+  chrome.storage.local.get("viewTime", (data) => {
+    viewTime = data['viewTime']
+    console.log('lmao')
+    let l = Object.keys(viewTime).length
+    for (let i = 0; i < l; i++) {
+      if (viewTime[Object.keys(viewTime)[i]] == 'blocked') { viewTime[Object.keys(viewTime)[i]] = 0 }
+    }
+    chrome.storage.local.set({ "viewTime" : viewTime }, () => { console.log(`unblocked and updated`) })
+  })
 }
 
 // BACKGROUND
