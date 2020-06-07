@@ -67,16 +67,30 @@ add.addEventListener('click', (e) => {
       document.getElementById('write-message').innerHTML = ''
     }, 1500)
   } else {
-    blockUrl[stripped] = timeLimit // *60 CONERT TO MINS
-    console.log(blockUrl)
-    chrome.storage.local.set({ "blockUrl" : blockUrl }, () => {
-      console.log('added!')
-      document.getElementById('url').value = ''
-      document.getElementById('urlLimit').value = ''
-      document.getElementById('write-message').innerHTML = 'Website and its time added!'
-      setTimeout(() => {
-        document.getElementById('write-message').innerHTML = ''
-      }, 1500)
+    chrome.storage.local.get("blockUrl", (data) => {
+      if (blockUrl) {
+        blockUrl = data['blockUrl']
+        if (Object.keys(blockUrl).length >= 12) {
+          document.getElementById('url').value = ''
+          document.getElementById('urlLimit').value = ''
+          document.getElementById('write-message').innerHTML = 'Url limit reached!'
+          setTimeout(() => {
+            document.getElementById('write-message').innerHTML = ''
+          }, 1500)
+        }
+      } else {
+        blockUrl[stripped] = timeLimit // *60 CONVERT TO MINS
+        console.log(blockUrl)
+        chrome.storage.local.set({ "blockUrl" : blockUrl }, () => {
+          console.log('added!')
+          document.getElementById('url').value = ''
+          document.getElementById('urlLimit').value = ''
+          document.getElementById('write-message').innerHTML = 'Website and its time added!'
+          setTimeout(() => {
+            document.getElementById('write-message').innerHTML = ''
+          }, 1500)
+        })
+      }
     })
   }
 })
@@ -166,7 +180,7 @@ viewTab.addEventListener('click', (e) => {
       list += '</table>'
       document.getElementById('view').innerHTML = list
       document.getElementById('view').style.display = 'block'
-     
+
     } catch (err) {
       console.log(err)
     }
@@ -178,6 +192,7 @@ home.onclick = (e) => {
   document.getElementById('blockurl').innerHTML = ''
   document.getElementById('view').innerHTML = ''
 }
+
 let blockTab = document.getElementById('block-tab')
 blockTab.addEventListener('click', (e) => {
   e.preventDefault()
@@ -247,5 +262,3 @@ $('#blockurl').on('click', '#delete-btn', (e) => {
     }
   })
 })
-
-
