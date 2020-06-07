@@ -5,7 +5,7 @@
 	"version": "2.0",
 	"author": "Smit Patel",
 	"browser_action": {
-		"default_icon": "computer.png",
+		"default_icon": "icon4.png",
 		"default_title": "Just observing your current url.",
 		"default_popup": "ui.html"
 	},
