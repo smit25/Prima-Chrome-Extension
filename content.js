@@ -27,13 +27,13 @@ function strip (url) {
 }
 
 if (st == -1 && end == -1) {
-  chrome.storage.sync.get("st", (data) => {
+  chrome.storage.local.get("st", (data) => {
     let st2 = data['st']
     if (st2 != 'undefined') {
       document.getElementById('startTime').value = st2
     }
   })
-  chrome.storage.sync.get("end", (data) => {
+  chrome.storage.local.get("end", (data) => {
     let end2 = data['end']
     if (end2 != 'undefined') {
       document.getElementById('stopTime').value = end2
@@ -56,20 +56,20 @@ add.addEventListener('click', (e) => {
     setTimeout(() => {
       document.getElementById('write-message').innerHTML = ''
     }, 1500)
-  } if (website == null) {
-    document.getElementById('write-message').innerHTML = 'Please enter the website you wish to block'
+  } if (website == '') {
+    document.getElementById('write-message').innerHTML = 'Please enter the url!'
     setTimeout(() => {
       document.getElementById('write-message').innerHTML = ''
     }, 1500)
   } else if (timeLimit == '') {
-    document.getElementById('write-message').innerHTML = 'Please enter the timeLimit for the website'
+    document.getElementById('write-message').innerHTML = 'Please enter the time limit!'
     setTimeout(() => {
       document.getElementById('write-message').innerHTML = ''
     }, 1500)
   } else {
-    blockUrl[stripped] = timeLimit
+    blockUrl[stripped] = timeLimit // *60 CONERT TO MINS
     console.log(blockUrl)
-    chrome.storage.sync.set({ "blockUrl" : blockUrl }, () => {
+    chrome.storage.local.set({ "blockUrl" : blockUrl }, () => {
       console.log('added!')
       document.getElementById('url').value = ''
       document.getElementById('urlLimit').value = ''
@@ -94,27 +94,33 @@ form.addEventListener('submit', (event) => {
   endTimem = endlist[1]
   var timeSet = [startTimeh, startTimem, endTimeh, endTimem]
 
-  chrome.storage.sync.set({ "timeSet": timeSet }, () => {
+  chrome.storage.local.set({ "timeSet": timeSet }, () => {
     console.log(`Start & End time set`)
   })
-  chrome.storage.sync.set({ "st":st }, () => {
+  chrome.storage.local.set({ "st":st }, () => {
     console.log('yes 1')
   })
-  chrome.storage.sync.set({ "viewTime": viewTime }, () => {
+  chrome.storage.local.set({ "viewTime": viewTime }, () => {
     console.log(`viewTime set`)
   })
-  chrome.storage.sync.set({ "end": end }, () => {
+  chrome.storage.local.set({ "end": end }, () => {
     console.log('yes 2')
   })
 })
 
 let start = document.getElementById('start')
 
-
 start.addEventListener('click', () => {
-  chrome.storage.sync.get("viewTime", (data) => {
+  document.getElementById('write-message').innerHTML = "It's time to be productive!"
+  setTimeout(() => {
+    document.getElementById('write-message').innerHTML = ''
+  }, 1500)
+  chrome.storage.local.get("viewTime", (data) => {
     if (!data['viewTime']) {
       document.getElementById('write-message').innerHTML = 'Please Set'
+      setTimeout(() => {
+        document.getElementById('write-message').innerHTML = ''
+      }, 1500)
     } else {
       chrome.runtime.sendMessage({ command: '0' }, (response) => {
         console.log('start background ' + response.message)
@@ -126,47 +132,81 @@ let pause = document.getElementById('stop')
 pause.addEventListener('click', () => {
   chrome.runtime.sendMessage({ command: '1' }, (response) => {
     console.log(`pause background` + response.message)
+    document.getElementById('write-message').innerHTML = "You're on a break!"
+    setTimeout(() => {
+      document.getElementById('write-message').innerHTML = ''
+    }, 1500)
   })
 })
 
-let viewTab = document.getElementById('viewTab')
+let viewTab = document.getElementById('view-tab')
 viewTab.addEventListener('click', (e) => {
   e.preventDefault()
-  document.getElementById('overlay').style.display = 'block'
   console.log('viewTab clicked')
-  chrome.storage.sync.get("viewTime", (data) => {
+  document.getElementById('blockurl').style.display = 'none'
+  chrome.storage.local.get("viewTime", (data) => {
     try {
       viewTime = data['viewTime']
       console.log(viewTime)
-      document.getElementById('list').innerHTML = '<ul id = "viewTab-item">' + "View Time of your websites today!" + '</ul>'
-      for (var i in viewTime) {
-        document.getElementsByClassName('viewTab-item').innerHTML += '<li>' + i.key + '&emsp' + i.value + '</li>'
+      list = '<h4>Websites and their use time:</h4>'
+      list += '<table id = "block-table">'
+      list += '<tr>'
+      list += '<th> Website Url </th>'
+      list += '<th> Time Used </th>'
+      list += '</tr>'
+      let len = Object.keys(viewTime).length
+      console.log()
+      for (let i = 0; i < len; i++) {
+        if (Object.keys(viewTime)[i] == '') { continue }
+        list += '<tr>'
+        list += '<td>' + Object.keys(viewTime)[i] + '</td>'
+        list += '<td>' + viewTime[Object.keys(viewTime)[i]] + '</td>'
+        list += '</tr>'
       }
+      list += '</table>'
+      document.getElementById('view').innerHTML = list
+      document.getElementById('view').style.display = 'block'
+     
     } catch (err) {
       console.log(err)
     }
   })
 })
 
-let blockTab = document.getElementById('blockTab')
+let home = document.getElementById('nav-home-tab')
+home.onclick = (e) => {
+  document.getElementById('blockurl').innerHTML = ''
+  document.getElementById('view').innerHTML = ''
+}
+let blockTab = document.getElementById('block-tab')
 blockTab.addEventListener('click', (e) => {
   e.preventDefault()
+  document.getElementById('view').innerHTML = ''
   console.log('blockTab clicked')
-  chrome.storage.sync.get("blockUrl", (data) => {
+  chrome.storage.local.get("blockUrl", (data) => {
     try {
       blockUrl = data['blockUrl']
       console.log(blockUrl)
-      list = '<ul id = "list">'
-      list += "Websites you have entered!"
+      list = '<h4>Your list of unproductive websites:</h4>'
+      list += '<table id = "block-table">'
+      list += '<tr>'
+      list += '<th> Website Url </th>'
+      list += '<th> Time Limit for that URL </th>'
+      list += '<th> Delete </th>'
+      list += '</tr>'
       let len = Object.keys(blockUrl).length
       console.log()
       for (let i = 0; i < len; i++) {
         console.log(Object.keys(blockUrl)[i] + '-' + blockUrl[Object.keys(blockUrl)[i]])
-        list += '<li>' + Object.keys(blockUrl)[i] + '<&emsp>' + blockUrl[Object.keys(blockUrl)[i]] + '<button class = "delete-btn">Remove</button>' + '</li>'
+        list += '<tr>'
+        list += '<td>' + Object.keys(blockUrl)[i] + '</td>'
+        list += '<td>' + blockUrl[Object.keys(blockUrl)[i]] + '</td>'
+        list += '<td><button type = "button" id = "delete-btn">Remove</button> </td>'
+        list += '</tr>'
       }
-      list += '</ul>'
-      document.getElementById('overlay').innerHTML = list
-      document.getElementById('overlay').style.display = 'inline-block'
+      list += '</table>'
+      document.getElementById('blockurl').innerHTML = list
+      document.getElementById('blockurl').style.display = 'block'
     } catch (err) {
       console.log(err)
     }
@@ -178,32 +218,34 @@ unblockAll.addEventListener('click', (e) => {
   e.preventDefault()
   chrome.runtime.sendMessage({ command: '2' }, (response) => {
     console.log(`pause background` + response.message)
+    document.getElementById('write-message').innerHTML = 'Unblocked all websites!'
+    setTimeout(() => {
+      document.getElementById('write-message').innerHTML = ''
+    }, 1500)
   })
 })
-function off () {
-  document.getElementById('overlay').style.display = "none";
-  list = ''
-  document.getElementById('overlay').innerHTML = list
-}
 
-document.getElementById('overlay').onclick = () => { off() }
-let deleteBtn = document.getElementsByClassName("delete-btn");
-Array.prototype.slice.call(deleteBtn).forEach(function (item) {
-  item.addEventListener("click", function (e) {
-    let s = e.target.parentNode.value
-    let sList = s.split('->')
-    s = sList[0]
-    e.target.parentNode.remove()
-    chrome.storage.sync.get("blockUrl", (data) =>{
-      try {
-        blockUrl = data['blockUrl']
-        delete blockUrl[s]
-        chrome.storage.sync.set({ "blockUrl": blockUrl }, () => {
-          console.log(s + ' removed')
-        })
-      } catch (err) {
-        console.log(err)
-      }
-    })
-  });
+$('#blockurl').on('click', '#delete-btn', (e) => {
+  e.preventDefault()
+  console.log('Harvey Donna')
+  var td = e.target.parentNode
+  var tr = td.parentNode // the row to be removed
+  console.log(tr)
+  let s = tr.cells[0].innerHTML
+  console.log(s)
+  tr.parentNode.removeChild(tr)
+  chrome.storage.local.get("blockUrl", (data) =>{
+    try {
+      blockUrl = data['blockUrl']
+      delete blockUrl[s]
+      console.log(blockUrl)
+      chrome.storage.local.set({ "blockUrl": blockUrl }, () => {
+        console.log(s + ' removed')
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  })
 })
+
+

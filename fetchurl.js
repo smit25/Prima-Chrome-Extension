@@ -29,14 +29,14 @@ function strip (url) {
 }
 var receive = (url) => {
   mainUrl = strip(url)
-  chrome.storage.sync.get("viewTime", (result) => {
+  chrome.storage.local.get("viewTime", (result) => {
     if (result) {
       viewTime = result['viewTime']
     }
     console.log(viewTime)
     if (typeof (viewTime[mainUrl]) == 'undefined') {
       viewTime[mainUrl] = 0
-      chrome.storage.sync.set({"viewTime" : viewTime }, () => {
+      chrome.storage.local.set({"viewTime" : viewTime }, () => {
         console.log(`Website added ${mainUrl}`)
       })
     } else {
@@ -99,6 +99,7 @@ var block = (url, myfunc) => {
 var unblock = (myfunc) => {
   chrome.webRequest.onBeforeRequest.removeListener(myfunc)
   console.log('All websites unblocked')
+  chrome.tabs.reload(() => { console.log('reloaded') })
 }
 
 // BACKGROUND
@@ -112,7 +113,7 @@ var background = () => {
   let startTime
   let endTime
   var currTime = hrs+"."+mins
-  chrome.storage.sync.get("timeSet", (data) => {
+  chrome.storage.local.get("timeSet", (data) => {
     timeSet = data['timeSet']
     startTime = timeSet[0] +"." + timeSet[1]
     endTime = timeSet[2] +"." + timeSet[3]
@@ -126,20 +127,20 @@ var background = () => {
       }
     }
   })
-  chrome.storage.sync.get("viewTime", (result) => {
+  chrome.storage.local.get("viewTime", (result) => {
     if (result) {
       viewTime = result['viewTime']
       console.log(viewTime)
     }
     if (day != currDay) {
       viewTime = {}
-      chrome.storage.sync.set({"viewTime" : viewTime }, () => {
+      chrome.storage.local.set({"viewTime" : viewTime }, () => {
         console.log('New day, history cleared')
       })
       currDay = day
     }
 
-    chrome.storage.sync.get("blockUrl", (data) => {
+    chrome.storage.local.get("blockUrl", (data) => {
       blockUrl = data['blockUrl']
       console.log('blockUrl accessed')
 
@@ -149,14 +150,14 @@ var background = () => {
           block(mainUrl, myfunc)
           chrome.tabs.reload(() => { console.log('reloaded') })
           viewTime[mainUrl] = 'blocked'
-          chrome.storage.sync.set({ 'viewTime': viewTime }, () => {
+          chrome.storage.local.set({ 'viewTime': viewTime }, () => {
             console.log(`${mainUrl} blocked`)
           })
         }
       } if (viewTime[mainUrl] != 'blocked') {
-        let newTime = viewTime[mainUrl] + 1
+        let newTime = viewTime[mainUrl] + 2
         viewTime[mainUrl] = newTime
-        chrome.storage.sync.set({ 'viewTime': viewTime }, () => {
+        chrome.storage.local.set({ 'viewTime': viewTime }, () => {
           console.log('Time updated')
         })
       }

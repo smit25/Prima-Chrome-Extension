@@ -11,10 +11,10 @@
 	},
 	"content_scripts": [{
 		"matches": ["http://*/*", "https://*/*", "<all_urls>"],
-		"js": ["content.js", "jquery-3.5.1.min.js"],
+		"js": ["content.js", "jquery-3.5.1.min.js", "js/bootstrap.min.js"],
 		"css": ["content.css"]
 	  }],
-	"permissions": ["tabs", "activeTab", "http://127.0.0.1:5000/*", "<all_urls>", "storage", "webRequest", "webRequestBlocking", "declarativeContent"],
+	"permissions": ["tabs", "activeTab", "http://127.0.0.1:5000/*", "<all_urls>", "storage", "unlimitedStorage", "webRequest", "webRequestBlocking", "declarativeContent"],
 	"background": {
 		"scripts": ["fetchurl.js"],
 		"persistent": true
