@@ -68,16 +68,14 @@ add.addEventListener('click', (e) => {
     }, 1500)
   } else {
     chrome.storage.local.get("blockUrl", (data) => {
-      if (blockUrl) {
+      if ((blockUrl) != 'undefined' && Object.keys(blockUrl).length >= 12) {
         blockUrl = data['blockUrl']
-        if (Object.keys(blockUrl).length >= 12) {
-          document.getElementById('url').value = ''
-          document.getElementById('urlLimit').value = ''
-          document.getElementById('write-message').innerHTML = 'Url limit reached!'
-          setTimeout(() => {
-            document.getElementById('write-message').innerHTML = ''
-          }, 1500)
-        }
+        document.getElementById('url').value = ''
+        document.getElementById('urlLimit').value = ''
+        document.getElementById('write-message').innerHTML = 'Url limit reached!'
+        setTimeout(() => {
+          document.getElementById('write-message').innerHTML = ''
+        }, 1500)
       } else {
         blockUrl[stripped] = timeLimit // *60 CONVERT TO MINS
         console.log(blockUrl)
@@ -237,6 +235,15 @@ unblockAll.addEventListener('click', (e) => {
     setTimeout(() => {
       document.getElementById('write-message').innerHTML = ''
     }, 1500)
+  })
+  chrome.storage.local.get("viewTime", (data) => {
+    viewTime = data['viewTime']
+    console.log('lmao')
+    let l = Object.keys(viewTime).length
+    for (let i = 0; i < l; i++) {
+      if (viewTime[Object.keys(viewTime)[i]] == 'blocked') { viewTime[Object.keys(viewTime)[i]] = 0 }
+    }
+    chrome.storage.local.set({ "viewTime" : viewTime }, () => { console.log(`unblocked and updated`) })
   })
 })
 
