@@ -4,10 +4,8 @@
 
 console.log('Begin')
 var viewTime = {}
-var currDate = new Date()
-var currDay = currDate.getDay()
+var currDay = ''
 var mainUrl = ''
-var flag = true
 var blockUrl = {}
 var loop = 0
 // console.log('Smit')
@@ -32,22 +30,22 @@ var receive = (url) => {
   chrome.storage.local.get("viewTime", (result) => {
     if (result) {
       viewTime = result['viewTime']
-    }
-    console.log(viewTime)
-    if (typeof (viewTime[mainUrl]) == 'undefined') {
-      viewTime[mainUrl] = 0
-      chrome.storage.local.set({"viewTime" : viewTime }, () => {
-        console.log(`Website added ${mainUrl}`)
-      })
-    } else {
-      console.log(`Url already present`)
+      // console.log(viewTime)
+      if (typeof (viewTime[mainUrl]) == 'undefined') {
+        viewTime[mainUrl] = 0
+        chrome.storage.local.set({"viewTime" : viewTime }, () => {
+          console.log(`Website added ${mainUrl}`)
+        })
+      } else {
+        console.log(`Url already present`)
+      }
     }
   })
   return mainUrl
 }
 // RECEIVE URL FROM CHROME API
 
-console.log('Smit')
+// console.log('Smit')
 chrome.tabs.onActivated.addListener(function (activeInfo) { // Event Fires when the active tab in a window changes.
   chrome.tabs.get(activeInfo.tabId, async function (tab) {
     let Url = tab.url// url of new tab
@@ -65,7 +63,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, change, tab) => { // Fired when 
   if (tab.active && change.url) {
     let Url = change.url
     try {
-      console.log(Url)
+      // console.log(Url)
       let main = receive(Url)
       console.log(`Url updated ${main}`)
     } catch (err) {
@@ -88,6 +86,7 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) { // Fired when a
 var myfunc = function (details) {
   return { cancel: true }
 }
+
 var block = (url, myfunc) => {
   chrome.webRequest.onBeforeRequest.addListener(
     myfunc,
@@ -102,7 +101,7 @@ var unblock = (myfunc) => {
   chrome.tabs.reload(() => { console.log('reloaded') })
   chrome.storage.local.get("viewTime", (data) => {
     viewTime = data['viewTime']
-    console.log('lmao')
+    // console.log('lmao')
     let l = Object.keys(viewTime).length
     for (let i = 0; i < l; i++) {
       if (viewTime[Object.keys(viewTime)[i]] == 'blocked') { viewTime[Object.keys(viewTime)[i]] = 0 }
@@ -119,42 +118,37 @@ var background = () => {
   var hrs = d.getHours()
   var mins = d.getMinutes()
   let timeSet = []
-  let startTime
-  let endTime
+  var startTime = ''
+  var endTime = ''
   var currTime = hrs+"."+mins
+  console.log(typeof (currTime))
+  
   chrome.storage.local.get("timeSet", (data) => {
     timeSet = data['timeSet']
-    startTime = timeSet[0] +"." + timeSet[1]
-    endTime = timeSet[2] +"." + timeSet[3]
-    if (flag == false) {
-      if ((currTime >= endTime) || (currTime < startTime)) {
-        if (currTime >= endTime) { console.log('Donna') }
-        else if (currTime < startTime) { console.log('Harvey') }
-        console.log(currTime + ' ' + startTime + ' ' + endTime)
-        unblock(myfunc)
-        flag = true
-      }
-    }
+    console.log('----' + typeof (timeSet))
+    startTime = timeSet[0] + "." + timeSet[1]
+    endTime = timeSet[2] + "." + timeSet[3]
   })
+  console.log(typeof (startTime))
   chrome.storage.local.get("viewTime", (result) => {
     if (result) {
       viewTime = result['viewTime']
-      console.log(viewTime)
+      // console.log(viewTime)
     }
     if (day != currDay) {
       viewTime = {}
       chrome.storage.local.set({"viewTime" : viewTime }, () => {
         console.log('New day, history cleared')
       })
-      currDay = day
     }
+    currDay = day
 
     chrome.storage.local.get("blockUrl", (data) => {
       blockUrl = data['blockUrl']
-      console.log('blockUrl accessed')
-
-      if (startTime <= currTime < endTime) {
-        flag = false
+      // console.log('blockUrl accessed')
+      // console.log(startTime + '-' + currTime + '-' + endTime)
+      if (startTime <= currTime && currTime < endTime) {
+        // console.log(viewTime[mainUrl] + ' ' + blockUrl[mainUrl])
         if ((mainUrl in blockUrl) && (viewTime[mainUrl] >= blockUrl[mainUrl]) && (viewTime[mainUrl] != 'blocked')) {
           block(mainUrl, myfunc)
           chrome.tabs.reload(() => { console.log('reloaded') })
@@ -187,7 +181,7 @@ chrome.runtime.onMessage.addListener(
       console.log('command = 0')
       sendResponse({ message: "Started" })
       loop = setInterval(background, newLocal)
-      console.log('lol')
+      // console.log('lol')
     } if (request.command == '1') {
       console.log(`command = 1`)
       clearInterval(loop)

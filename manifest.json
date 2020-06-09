@@ -1,12 +1,16 @@
 {
 	"manifest_version": 2,
-	"name": "Weblocker",
-	"description": "Blocks website and increases productivity.",
+	"name": "Prima",
+	"description": "Focus more. Accomplish much more. Track your web activity, limit time on unproductive websites, block them and get more done.",
 	"version": "2.0",
 	"author": "Smit Patel",
+	"icons": {
+		"16": "icon4.png",
+		"48": "icon4.png",
+		"128": "icon4.png"
+	},
 	"browser_action": {
-		"default_icon": "icon4.png",
-		"default_title": "Just observing your current url.",
+		"default_title": "Your personal productivity tool",
 		"default_popup": "ui.html"
 	},
 	"content_scripts": [{
@@ -18,6 +22,5 @@
 	"background": {
 		"scripts": ["fetchurl.js"],
 		"persistent": true
-	},
-	"content_security_policy": "script-src 'self' 'unsafe-eval' https://ajax.googleapis.com; object-src 'self'"
+	}
 }

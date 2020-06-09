@@ -47,8 +47,9 @@ add.addEventListener('click', (e) => {
   e.preventDefault()
   website = document.getElementById('url').value
   timeLimit = document.getElementById('urlLimit').value
+  timeLimit = timeLimit * 60
   let stripped = strip(website)
-  console.log('addcheck' + website)
+  // console.log('addcheck' + website)
   if (stripped in blockUrl) {
     document.getElementById('write-message').innerHTML = 'Website already Present!'
     document.getElementById('url').value = ''
@@ -78,7 +79,7 @@ add.addEventListener('click', (e) => {
         }, 1500)
       } else {
         blockUrl[stripped] = timeLimit // *60 CONVERT TO MINS
-        console.log(blockUrl)
+        // console.log(blockUrl)
         chrome.storage.local.set({ "blockUrl" : blockUrl }, () => {
           console.log('added!')
           document.getElementById('url').value = ''
@@ -118,6 +119,10 @@ form.addEventListener('submit', (event) => {
   chrome.storage.local.set({ "end": end }, () => {
     console.log('yes 2')
   })
+  document.getElementById('write-message').innerHTML = 'Work Hours set! '
+  setTimeout(() => {
+    document.getElementById('write-message').innerHTML = ''
+  }, 1500)
 })
 
 let start = document.getElementById('start')
@@ -167,12 +172,15 @@ viewTab.addEventListener('click', (e) => {
       list += '<th> Time Used </th>'
       list += '</tr>'
       let len = Object.keys(viewTime).length
-      console.log()
       for (let i = 0; i < len; i++) {
         if (Object.keys(viewTime)[i] == '') { continue }
         list += '<tr>'
         list += '<td>' + Object.keys(viewTime)[i] + '</td>'
-        list += '<td>' + viewTime[Object.keys(viewTime)[i]] + '</td>'
+        if (viewTime[Object.keys(viewTime)[i]] != 'blocked') {
+          list += '<td>' + parseInt((viewTime[Object.keys(viewTime)[i]] / 60)) + ":" + (viewTime[Object.keys(viewTime)[i]] % 60) + '</td>'
+        } else {
+          list += '<td>' + viewTime[Object.keys(viewTime)[i]] + '</td>'
+        }
         list += '</tr>'
       }
       list += '</table>'
@@ -208,12 +216,11 @@ blockTab.addEventListener('click', (e) => {
       list += '<th> Delete </th>'
       list += '</tr>'
       let len = Object.keys(blockUrl).length
-      console.log()
+      // console.log(blockUrl)
       for (let i = 0; i < len; i++) {
-        console.log(Object.keys(blockUrl)[i] + '-' + blockUrl[Object.keys(blockUrl)[i]])
         list += '<tr>'
         list += '<td>' + Object.keys(blockUrl)[i] + '</td>'
-        list += '<td>' + blockUrl[Object.keys(blockUrl)[i]] + '</td>'
+        list += '<td>' + (blockUrl[Object.keys(blockUrl)[i]] / 60) + '</td>'
         list += '<td><button type = "button" id = "delete-btn">Remove</button> </td>'
         list += '</tr>'
       }
@@ -243,11 +250,11 @@ $('#blockurl').on('click', '#delete-btn', (e) => {
   console.log('Harvey Donna')
   var td = e.target.parentNode
   var tr = td.parentNode // the row to be removed
-  console.log(tr)
+  // console.log(tr)
   let s = tr.cells[0].innerHTML
-  console.log(s)
+  // console.log(s)
   tr.parentNode.removeChild(tr)
-  chrome.storage.local.get("blockUrl", (data) =>{
+  chrome.storage.local.get("blockUrl", (data) => {
     try {
       blockUrl = data['blockUrl']
       delete blockUrl[s]

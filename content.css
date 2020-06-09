@@ -1,65 +1,65 @@
 @font-face {
-  font-family: Bavro; 
-  src: url('./Bavro-Regular.woff')
+    font-family: Bavro; 
+    src: url('./Bavro-Regular.woff')
 }
 @font-face { 
-  font-family: Vollkorn;
-  src: url('./Vollkorn-Regular.ttf');
+    font-family: Vollkorn;
+    src: url('./Vollkorn-Regular.ttf');
 }
 @font-face { 
-  font-family : Playfair;
-  src: url('./PlayfairDisplay-Medium.ttf')
+    font-family : Playfair;
+    src: url('./PlayfairDisplay-Medium.ttf')
 }
 body { min-width: 500px; min-height: 400px; margin-right: 20px; font-family: Vollkorn; color:black; border: 10px; margin: 10px; background-image: url('./test6.jpg');}
 
 #block-table {
-  width: 100%;
-}
-
-#block-table td, #block-table th {
-  padding: 8px;
-  border-bottom: 1px solid white;
-}
-
-#block-table tr:hover { background-color:whitesmoke; opacity :0.8; color: black;}
-
-#block-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  color: white;
-}
-.btn{ 
-    padding-left: 15px;
-    padding-right: 15px;
-    margin: 6px;
-}
-#tab-content { color:white;}
-#message{ color: white;}
-
-.nav>a {
-  color: #fff;
+    width: 100%;
+  }
+  
+  #block-table td, #block-table th {
+    padding: 8px;
+    border-bottom: 1px solid white;
+  }
+  
+  #block-table tr:hover { background-color:whitesmoke; opacity :0.8; color: black;}
+  
+  #block-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    color: white;
+  }
+  .btn{ 
+      padding-left: 15px;
+      padding-right: 15px;
+      margin: 6px;
+  }
+ #tab-content { color:white;}
+  #write-message{ color: white; font-style: italic;}
+  
+  .nav>a {
+    color: #fff;
 }
 
 label { text-align: center;
 display:block;
 }
 h4 { color: white; text-align: center; margin-top:8px; font-family: Playfair;}
-h2{
+  h2{
+      text-align: center;
+      color: white;
+      font-family: Bavro;
+  }
+  #slogan{
     text-align: center;
     color: white;
     font-family: Bavro;
 }
-#slogan{
-  text-align: center;
-  color: white;
-  font-family: Bavro;
-}
-p {color:white;}
-.tab { color:white;}
-#submit, #add { margin: auto; display : block;  }
-#unblock { margin: auto; display: block;}
-button { border-radius: 5px;}
-.time { margin: 5px;}
-
-#write-message { text-align:center; margin-top:5px;}
+  p {color:white;}
+ .tab { color:white;}
+  #submit, #add { margin: auto; display : block;  }
+  #unblock { margin: auto; display: block;}
+  button { border-radius: 5px;}
+  .time { margin: 5px;}
+  
+  #write-message { text-align:center; margin-top:5px;}
